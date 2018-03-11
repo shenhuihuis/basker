@@ -12,7 +12,7 @@ import police_router from "./police"//公安监管二级路由
 import logistics_router from "./logistics"//配送管理二级路由
 import system_router from "./system"//系统管理二级路由
 import project_router from "./project"//项目监管二级路由
-const login = resolve => require(['../page/login'], resolve)  //项目监管
+import login from "./login"
 const register = resolve => require(['../page/register'], resolve)  //项目监管
 const NotFoundComponent  = resolve => require(['../page/404'], resolve)//页面4004
 
@@ -65,11 +65,7 @@ export default [
       ...project_router
     ]
   },
-  { 
-    path:'/login', 
-    component: login,
-    name:"login"
-  },
+  ...login,
   { 
     path:'/register', 
     component: register,

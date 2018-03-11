@@ -1,15 +1,13 @@
-const system = resolve => require(['../page/system/system'], resolve)
-const system_index = resolve => require(['../page/system/index'], resolve) 
-const sys_details = resolve => require(['../page/system/sys_details'], resolve) 
+const system = resolve => require(['../page/system/system'], resolve);
+const system_index = resolve => require(['../page/system/index'], resolve);
+const sys_details = resolve => require(['../page/system/sys_details'], resolve); 
 
-const sys_approve = resolve => require(['../page/system/sys_approve'], resolve)  
-const approve_index = resolve => require(['../page/system/approve_index'], resolve) 
-const approve_details = resolve => require(['../page/system/approve_details'], resolve)  
+const sys_approve = resolve => require(['../page/system/sys_approve'], resolve); 
+const approve_index = resolve => require(['../page/system/approve_index'], resolve); 
+const approve_details = resolve => require(['../page/system/approve_details'], resolve);
   
-const sys_change = resolve => require(['../page/system/sys_change'], resolve) 
-
-
-const sys_setting = resolve => require(['../page/system/sys_setting'], resolve)  
+const sys_change = resolve => require(['../page/system/sys_change'], resolve);
+const sys_setting = resolve => require(['../page/system/sys_setting'], resolve);  
 
 export default [
   {

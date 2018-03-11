@@ -7,6 +7,7 @@ Vue.use(ElementUI)
 import App from './App'
 import routes from './router/routes'
 import publics from "./public"
+Vue.prototype.publics=publics;
 const router = new VueRouter({
   routes,
   //mode:"history"
