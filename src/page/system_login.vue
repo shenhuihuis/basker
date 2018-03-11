@@ -7,7 +7,7 @@
 import login from "../components/login";
 export default {
   data(){
-
+    return{}
   },
   components:{
       Mylogin:login

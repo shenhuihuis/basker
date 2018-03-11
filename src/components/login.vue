@@ -33,22 +33,38 @@
         },
         mounted() {
             this.publics.cook.delete("token");
-            let router = this.$route.name,
-                to = null;
-            if (router == "blast_login") {
-                to = "blast_index";
-            } else if (router == "depot_login") {
-                to = "depot_index"
-            } else if (router == "police_login") {
-                to = "police_index"
-            } else if (router == "logistics_login") {
-                to = "logistics_index"
-            } else if (router == "system_login") {
-                to = "system"
-            } else {
-                to = "project_index";
+            let router = this.$route.name;
+            let routername=["blast_login","depot_login","police_login","logistics_login","system_login","project_login"];
+            let toname=[
+                {name:"blast_index",id:4},
+                {name:"depot_index",id:3},
+                {name:"police_index",id:1},
+                {name:"logistics_index",id:2},
+                {name:"system",id:5},
+                {name:"project_index",id:6}
+            ];
+            for(let [index,val] of routername.entries()){
+                if(val==router){
+                    this.router=toname[index].name;
+                    sessionStorage.setItem("companyid",toname[index].id);
+                }
             }
-            this.router = to;
+            
+
+            // if (router == "blast_login") {            //4
+            //     to = "blast_index";
+            // } else if (router == "depot_login") {     //3
+            //     to = "depot_index"
+            // } else if (router == "police_login") {    //1
+            //     to = "police_index"
+            // } else if (router == "logistics_login") { //2
+            //     to = "logistics_index"
+            // } else if (router == "system_login") {    //5
+            //     to = "system"
+            // } else {
+            //     to = "project_index";                 //6
+            // }
+            // this.router = to;
         },
         methods: {
             timer() {

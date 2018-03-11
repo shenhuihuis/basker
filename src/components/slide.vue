@@ -61,7 +61,6 @@
           this.slides = routes.system;
           break;
       }
-      console.log(this.slides)
     },
     components: {
       HappyScroll

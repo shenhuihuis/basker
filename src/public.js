@@ -17,9 +17,8 @@ const cook = {
     cook.set(name, "", -1);
   }
 };
-const Basse_Port = "http://119.23.108.9:8898/";
+const Basse_Port = "http://119.23.108.9:8898/api/v1/";
 //const Basse_Port="http://"+location.host+"/fangtai_api/v2/"; //测试域名
-//const Basse_Port=document.location.protocol+"//www.hfftcf.com/api/v1/"    //线上域名
 export default {
   cook: cook,
   Basse_Port: Basse_Port,
@@ -53,13 +52,10 @@ export default {
       let $put;
       let token = cook.get("token");
       if (token) {
-        let tk={
-          token:token
-        }
-        data=JSON.stringify(Object.assign(data,tk));
         if (type == "get") {
           $put = $http
-            .get(Basse_Port + newUrl, data)
+            .get(Basse_Port + newUrl,data)
+            .set("Authorization","Bearer "+token)
             .set("Content-Type", "application/json");
         } else {
           $put = $http
@@ -110,6 +106,24 @@ export default {
 
     return p;
   },
+  person(e){
+    let Arr=[
+      { key:1,name:"爆破员",},
+      { key:2,name:"安全员"},
+      { key:3,name:"保管员",},
+      { key:4,name:"技术员"},
+      { key:5,name:"押运员",},
+      { key:6,name:"驾驶员"},
+      { key:7,name:"仓库保管员",},
+      { key:8,name:"监理员"},
+      { key:9,name:"仓库保管员",},
+      { key:10,name:"评估人员"}
+    ]
+    for(let [index,val] of Arr.entries()){
+      if(val.key==e)
+        return val.name
+    }
+  },
   index_config: {}
 };
 
@@ -120,4 +134,4 @@ export default {
 let b = CryptoJS.enc.Utf8.parse("11");
 console.log(CryptoJS.enc.Base64.stringify(b))
 let c = CryptoJS.enc.Base64.parse(CryptoJS.enc.Base64.stringify(b));
-console.log(c.toString(CryptoJS.enc.Utf8))*/
+/console.log(c.toString(CryptoJS.enc.Utf8))*/

@@ -319,7 +319,41 @@ a {
   
   }
   .page{
+    .el-pagination button.disabled{
+      background-color:#f3f3f3;
+    }
+    .btn-prev {
+      width:60px;
+      background: url("./assets/img/up.png") no-repeat; 
+      background-color: none;
+      i{
+        display: none!important;
+      }
+    }
+    .btn-prev:hover{
+      background: url("./assets/img/up_lk.png") no-repeat; 
+    }
+    .btn-next {
+      width:60px;
+      background: url("./assets/img/down.png") no-repeat; 
+      background-color: none;
+      i{
+        display: none!important;
+      }
+    }
+    .btn-next:hover{
+      background: url("./assets/img/down_lk.png") no-repeat; 
+    }
+    ul{
+      margin:0 10px;
+    }
+    margin:20px auto;
     text-align: center;
+    .el-pager li{
+      font-size: 18px;
+     
+      background: none;
+    }
   }
   .sysindex,.logistics{
     padding:0 51px;
@@ -1686,6 +1720,11 @@ a {
         }
       }
     }
+  }
+  .nobg{
+    background: url("./assets/img/nobg.png") #fff no-repeat center  center;
+    width:100%;
+    height:400px; 
   }
   @media screen and (max-width: 1500px) {
     .bla_xgform .clearbox .ssll {

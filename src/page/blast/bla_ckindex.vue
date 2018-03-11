@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="load">
         <div class="bread">
             <div class="htit">爆破项目登记管理</div>
         </div>
@@ -17,7 +17,7 @@
                 <a href="javascript:void(0);" class="add" @click="show=1">添加</a>
             </div>
         </div>
-        <div class="listbox">
+        <div class="listbox" v-if="lists">
             <table cellpadding=0 cellspacing=0>
                 <thead>
                     <td width="20%">项目时间</td>
@@ -29,31 +29,69 @@
                     <td width="20%">操作</td>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>2018年02月20日</td>
-                        <td>xxx</td>
-                        <td>xxx</td>
-                        <td>xxx</td>
-                        <td>xxx</td>
-                        <td>xxx</td>
+                    <tr v-for="i in lists.data">
+                        <td>{{i.createTime|timer}}</td>
+                        <td>{{i.projectName}}</td>
+                        <td>{{i.projectAddress}}</td>
+                        <td>{{}}</td>
+                        <td>{{i.supervisorCompanyName}}</td>
+                        <td>{{i.inputMan}}</td>
                         <td>
                             <router-link :to="{name:'bla_xg'}">查看</router-link>
+                            <router-link :to="{name:'bla_xg'}">编辑</router-link>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <div class="page"></div>
+            <div class="page">
+                <el-pagination
+                    layout="prev, pager, next"
+                    :total="lists.count">
+                </el-pagination>
+            </div>
         </div>
+        <div class="nobg" v-else></div>
     </div>
 </template>
+
 <script>
-  export default {
-      data (){
-         return {
-           time:"",
-           find:"",
-         
-      }
+    export default {
+        data() {
+            return {
+                load:false,
+                time: "",
+                find: "",
+                lists:null,
+                companyId:sessionStorage.getItem("companyid"),
+                form:{
+                    companyId:"4",
+                    page:1,
+                    size:10
+                },
+                
+            }
+        },
+        mounted() {
+            this.list();
+            console.log(this.publics.person(1))
+        },
+        filters:{
+            timer(e){
+                let data=new Date(e);
+                return e=data.getFullYear()+"年"+(data.getMonth()+1)+"月"+data.getDate()+"日";
+            }
+        },
+        methods: {
+            list(){
+                this.publics.$AJAX("company/"+this.companyId+"/projects","get",this.form,e=>{
+                    if(e.count==0)
+                        this.lists=null;
+                    else 
+                        this.lists=e;
+                    this.load=true;
+                })
+                
+            }
+        }
     }
-  }
 </script>

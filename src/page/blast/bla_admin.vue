@@ -4,6 +4,20 @@
             <div class="bread">
                 <div class="htit">企业及人员管理</div>
             </div>
+            <div class="sebox">
+                <div class="selected">
+                    <div class="timeselect">
+                        <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+                        </el-date-picker>
+                    </div>
+                    <div class="find">
+                        <el-input placeholder="请输入内容" v-model="find" class="input-with-select">
+                            <el-button slot="append" icon="el-icon-search"></el-button>
+                        </el-input>
+                    </div>
+                    <a href="javascript:void(0);" class="add" @click="show=1">添加</a>
+                </div>
+            </div>
             <div class="listbox">
                 <table cellpadding=0 cellspacing=0>
                     <thead>
@@ -135,8 +149,20 @@
                 show:0,
                 form:{
                     name:""
-                }
+                },
+                comlist:{
+                    pageSize:1,
+                    currPage:1
+                },
+                find:"",
+                time:""
             }
         },
+        mounted(){
+            console.log(this.comlist)
+            this.publics.$AJAX("company/people/"+sessionStorage.getItem("companyid"),"get",this.comlist,e=>{
+                console.log(e)
+            })
+        }
     }
 </script>
