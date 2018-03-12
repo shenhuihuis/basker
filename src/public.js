@@ -1,5 +1,15 @@
 import $http from "superagent";
 import { Message } from "element-ui";
+// { key:"1",name:"爆破员",},
+// { key:"2",name:"安全员"},
+// { key:"3",name:"保管员",},
+// { key:"4",name:"技术员"},
+// { key:"5",name:"押运员",},
+// { key:"6",name:"驾驶员"},
+// { key:"7",name:"仓库保管员",},
+// { key:"8",name:"监理员"},
+// { key:"9",name:"仓库保管员",},
+// { key:"10",name:"评估人员"}
 const cook = {
   set(name, value, days) {
     var d = new Date();
@@ -17,6 +27,7 @@ const cook = {
     cook.set(name, "", -1);
   }
 };
+//http://119.23.108.9/      测试服务器
 const Basse_Port = "http://119.23.108.9:8898/api/v1/";
 //const Basse_Port="http://"+location.host+"/fangtai_api/v2/"; //测试域名
 export default {
@@ -65,7 +76,10 @@ export default {
         $put.end((err, res) => {
           if (err || !res.ok) {
             if (res.status == 500) {
-
+              Message({
+                type: "error",
+                message: res.body.message
+              });
             } else if (res.status == 404) {
 
             } else if (res.status == 403) {
@@ -87,9 +101,14 @@ export default {
             }
             reject();
           } else {
-            let BackJSON = JSON.parse(res.text);
+           
             if (res.status == "200") {
-              callback(BackJSON);
+              if(res.text.length==0){
+                callback(res)
+              }else{
+                let BackJSON = JSON.parse(res.text);
+                callback(BackJSON);
+              }
               resolve();
             } else {
               Message({
@@ -102,27 +121,15 @@ export default {
       } else {
         window.location.href = cook.get("index") ;
       }
-    });
-
+    })
     return p;
   },
-  person(e){
-    let Arr=[
-      { key:1,name:"爆破员",},
-      { key:2,name:"安全员"},
-      { key:3,name:"保管员",},
-      { key:4,name:"技术员"},
-      { key:5,name:"押运员",},
-      { key:6,name:"驾驶员"},
-      { key:7,name:"仓库保管员",},
-      { key:8,name:"监理员"},
-      { key:9,name:"仓库保管员",},
-      { key:10,name:"评估人员"}
-    ]
-    for(let [index,val] of Arr.entries()){
-      if(val.key==e)
-        return val.name
-    }
+  person:["爆破员","安全员","保管员","技术员","押运员","驾驶员","仓库保管员","监理员","仓库保管员","评估人员"],
+  imgput(uid,fd,callback){
+    $http.post(Basse_Port+"file/user/"+uid, fd)
+    .end((err, res) => {
+        callback(err, res)
+    })
   },
   index_config: {}
 };

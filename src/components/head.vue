@@ -14,7 +14,7 @@
            <i class="cirs">11</i>
         </div>
         <div class="had">
-          <img width="72" height="72">
+          <img width="40" height="40" src="./../assets/img/hed.png">
           <div class="name">
              <div class="hname">王小二</div>
              <p>项目监管人</p>

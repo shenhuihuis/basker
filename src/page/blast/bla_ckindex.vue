@@ -33,9 +33,9 @@
                         <td>{{i.createTime|timer}}</td>
                         <td>{{i.projectName}}</td>
                         <td>{{i.projectAddress}}</td>
-                        <td>{{}}</td>
+                        <td>{{i.principal}}</td>
                         <td>{{i.supervisorCompanyName}}</td>
-                        <td>{{i.inputMan}}</td>
+                        <td></td>
                         <td>
                             <router-link :to="{name:'bla_xg'}">查看</router-link>
                             <router-link :to="{name:'bla_xg'}">编辑</router-link>
@@ -45,6 +45,8 @@
             </table>
             <div class="page">
                 <el-pagination
+                    :current-page="form.page"
+                    @current-change="handleCurrentChange"
                     layout="prev, pager, next"
                     :total="lists.count">
                 </el-pagination>
@@ -61,6 +63,7 @@
                 load:false,
                 time: "",
                 find: "",
+               // Arr:this.publics.person,
                 lists:null,
                 companyId:sessionStorage.getItem("companyid"),
                 form:{
@@ -73,24 +76,29 @@
         },
         mounted() {
             this.list();
-            console.log(this.publics.person(1))
         },
         filters:{
             timer(e){
                 let data=new Date(e);
                 return e=data.getFullYear()+"年"+(data.getMonth()+1)+"月"+data.getDate()+"日";
-            }
+            },  
+              
         },
         methods: {
             list(){
                 this.publics.$AJAX("company/"+this.companyId+"/projects","get",this.form,e=>{
                     if(e.count==0)
                         this.lists=null;
-                    else 
+                    else{
                         this.lists=e;
+                    }
                     this.load=true;
                 })
                 
+            },
+            handleCurrentChange(val){
+                this.form.page=val;
+                this.list();
             }
         }
     }

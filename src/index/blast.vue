@@ -15,9 +15,9 @@
 <script>
   import slide from "../components/slide";
   import head from "../components/head";
-  import { HappyScroll } from 'vue-happy-scroll'
-  import 'vue-happy-scroll/docs/happy-scroll.css'
-  //import footer from "../components/footer"
+  import { HappyScroll } from 'vue-happy-scroll';
+  
+  import 'vue-happy-scroll/docs/happy-scroll.css';
   export default {
     data() {
       return {
@@ -36,6 +36,7 @@
     },
     methods:{
       router(){
+        
         let router=this.$route.name;
         if(router=="bla_xg"){
           this.index=2

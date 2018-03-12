@@ -18,6 +18,7 @@
 </template>
 <script>
     import $http from "superagent";
+    import Base64 from "js-base64";
     export default {
         data() {
             return {
@@ -125,6 +126,13 @@
                             if (res.status == "200") {
                                 this.publics.setindex();
                                 this.publics.cook.set("token", BackJSON.token)
+                               /* let person={
+                                    companyId:BackJSON.companyId,
+                                    staffId:BackJSON.staffId,
+                                    companyType:BackJSON.companyType
+                                }
+                                sessionStorage.setItem("person",Base64.Base64.encode(JSON.stringify(person)));*/
+                                sessionStorage.setItem("person",Base64.Base64.encode(BackJSON.staffId));
                                 let history = this.publics.cook.get("history");
                                 let load=this.$loading({
                                     text: '登录中',
