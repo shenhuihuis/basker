@@ -47,7 +47,7 @@
             for(let [index,val] of routername.entries()){
                 if(val==router){
                     this.router=toname[index].name;
-                    sessionStorage.setItem("companyid",toname[index].id);
+                  
                 }
             }
             
@@ -112,7 +112,7 @@
                     username: this.forms.tel
                 };
                 let json = JSON.stringify(data);
-                $http.post("http://119.23.108.9:8898/auth/login", json)
+                $http.post("http://192.168.1.82:8898/auth/login", json)
                     .set("Content-Type", "application/json")
                     .end((err, res) => {
                         if (err || !res.ok) {
@@ -133,6 +133,7 @@
                                 }
                                 sessionStorage.setItem("person",Base64.Base64.encode(JSON.stringify(person)));*/
                                 sessionStorage.setItem("person",Base64.Base64.encode(BackJSON.staffId));
+                                sessionStorage.setItem("companyid",Base64.Base64.encode(BackJSON.companyId));
                                 let history = this.publics.cook.get("history");
                                 let load=this.$loading({
                                     text: '登录中',

@@ -27,8 +27,8 @@ const cook = {
     cook.set(name, "", -1);
   }
 };
-//http://119.23.108.9/      测试服务器
-const Basse_Port = "http://119.23.108.9:8898/api/v1/";
+const Basse_Port = "http://192.168.1.82:8898/api/v1/";    //测试服务器
+//const Basse_Port = "http://119.23.108.9:8898/api/v1/";
 //const Basse_Port="http://"+location.host+"/fangtai_api/v2/"; //测试域名
 export default {
   cook: cook,
@@ -68,7 +68,14 @@ export default {
             .get(Basse_Port + newUrl,data)
             .set("Authorization","Bearer "+token)
             .set("Content-Type", "application/json");
-        } else {
+        } 
+        if(type=="patch"){
+            $put = $http
+            .patch(Basse_Port + newUrl,data)
+            .set("Authorization","Bearer "+token)
+            .set("Content-Type", "application/json");
+        }
+        if(type=="post"){
           $put = $http
             .post(Basse_Port + newUrl, data)
             .set("Content-Type", "application/json");
@@ -102,8 +109,9 @@ export default {
             reject();
           } else {
            
-            if (res.status == "200") {
+            if (res.status == "200" || res.status == "201") {
               if(res.text.length==0){
+              
                 callback(res)
               }else{
                 let BackJSON = JSON.parse(res.text);
@@ -124,6 +132,29 @@ export default {
     })
     return p;
   },
+  projectLevel(e){     //项目级别
+    let a=["低","中","高"];
+    return e=a[e-1]
+  },
+  imgplice(e){
+    let a=e.replace(/^(?:[^/]*\/){3}(.*)$/,"$1");
+    return e=a.slice(0,a.indexOf("?"))
+  },
+  convertImgToBase64(url, callback, outputFormat){
+    var canvas = document.createElement('CANVAS'),
+      ctx = canvas.getContext('2d'),
+      img = new Image;
+    img.crossOrigin = 'Anonymous';
+    img.onload = function(){
+      canvas.height = img.height;
+      canvas.width = img.width;
+      ctx.drawImage(img,0,0);
+      var dataURL = canvas.toDataURL(outputFormat || 'image/png');
+      callback.call(this, dataURL);
+      canvas = null; 
+    };
+    img.src = url;
+  },
   person:["爆破员","安全员","保管员","技术员","押运员","驾驶员","仓库保管员","监理员","仓库保管员","评估人员"],
   imgput(uid,fd,callback){
     $http.post(Basse_Port+"file/user/"+uid, fd)
@@ -134,6 +165,13 @@ export default {
   index_config: {}
 };
 
+/*1.炸药
+
+2.雷管
+
+3.导爆管
+
+4.导爆索*/
 /* let a = CryptoJS.AES.encrypt("11",key)
    let b = CryptoJS.AES.decrypt(a, key)
    console.log(b.toString(CryptoJS.enc.Utf8))
@@ -141,4 +179,26 @@ export default {
 let b = CryptoJS.enc.Utf8.parse("11");
 console.log(CryptoJS.enc.Base64.stringify(b))
 let c = CryptoJS.enc.Base64.parse(CryptoJS.enc.Base64.stringify(b));
-/console.log(c.toString(CryptoJS.enc.Utf8))*/
+/console.log(c.toString(CryptoJS.enc.Utf8))
+{
+	address: "123",
+	companyId: "4",
+	homeAddress: "123123",
+	id: "08545ec24f124133838cd0baa5e98b73",
+	inputMan: "98800377074d463dbe1524d273a67fba",
+	licenceNumber: "123",
+	mobilePhone: "63660473",
+	name: "阿凡达",
+	phone: "13454752770",
+	staffDocumentOssCode: "5424766929144039a94de4f43fb38c8d.jpg",
+	staffId: "12312312312",
+	staffIdPhotoFrontOssCode: "5424766929144039a94de4f43fb38c8d.jpg",
+	staffIdPhotoReverseOssCode: "207c76244eac4784b2f18245b02d8f26.jpg",
+	staffLevel: 3,
+	staffPhotoOssCode: "5424766929144039a94de4f43fb38c8d.jpg",
+	staffType: 4,
+	staffTypeFlag: 4
+}
+
+*/
+

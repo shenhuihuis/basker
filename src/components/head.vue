@@ -21,7 +21,7 @@
           </div>
         </div>
         
-        <a href="javascript:vvoid(0);" class="out">退出</a>
+        <a href="javascript:void(0);" class="out">退出</a>
       </div>
   </div>
 </template>

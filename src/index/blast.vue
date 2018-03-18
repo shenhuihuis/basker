@@ -38,25 +38,24 @@
       router(){
         
         let router=this.$route.name;
+        
         if(router=="bla_xg"){
           this.index=2
         }
-        else if(router=="civil" || router=="civil_i_details" || router =="civil_buy" || router == "civil_buycheck" || router == "civil_get" || router == "civil_consume" || router=="civil_refund" ||  router=="civil_die"){
+        if(router=="civil" || router=="civil_i_details" || router =="civil_buy" || router == "civil_buycheck" || router == "civil_get" || router == "civil_consume" || router=="civil_refund" ||  router=="civil_die"){
           this.index=3;
         }
         if(router=="blast_home" || router =="blast_plan"){
           this.index=4
         }
-        else if(router=="blast_video" || router=="blast_videolist" || router =="blast_update" || router =="blast_look"){
+        if(router=="blast_video" || router=="blast_videolist" || router =="blast_update" || router =="blast_look"){
           this.index=6;
         }
-        else if(router=="blast_completed" || router=="completed_add" || router=="completed_see" || router=="completed_details"){
+        if(router=="blast_completed" || router=="completed_add" || router=="completed_see" || router=="completed_details"){
           this.index=7;
         }
-        else if(router=="blast_all" || router=="all_add" || router=="all_see" || router=="all_details"){
+        if(router=="blast_all" || router=="all_add" || router=="all_see" || router=="all_details"){
           this.index=8;
-        }else{
-          this.index=null
         }
     
         

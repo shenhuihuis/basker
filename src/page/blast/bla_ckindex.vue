@@ -14,7 +14,7 @@
                         <el-button slot="append" icon="el-icon-search"></el-button>
                     </el-input>
                 </div>
-                <a href="javascript:void(0);" class="add" @click="show=1">添加</a>
+                <router-link :to="{name:'bla_xg'}" class="add">添加</router-link>
             </div>
         </div>
         <div class="listbox" v-if="lists">
@@ -30,7 +30,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="i in lists.data">
-                        <td>{{i.createTime|timer}}</td>
+                        <td>{{i.beginTime|timer}}</td>
                         <td>{{i.projectName}}</td>
                         <td>{{i.projectAddress}}</td>
                         <td>{{i.principal}}</td>
@@ -38,7 +38,7 @@
                         <td></td>
                         <td>
                             <router-link :to="{name:'bla_xg'}">查看</router-link>
-                            <router-link :to="{name:'bla_xg'}">编辑</router-link>
+                            <router-link :to="{name:'bla_xg'}">申请变更</router-link>
                         </td>
                     </tr>
                 </tbody>
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+    import Base64 from "js-base64";
     export default {
         data() {
             return {
@@ -65,9 +66,8 @@
                 find: "",
                // Arr:this.publics.person,
                 lists:null,
-                companyId:sessionStorage.getItem("companyid"),
+                companyId:Base64.Base64.decode(sessionStorage.getItem("companyid")),
                 form:{
-                    companyId:"4",
                     page:1,
                     size:10
                 },

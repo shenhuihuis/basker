@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="load">
         <div class="logistics" v-if="show==0">
             <div class="bread">
                 <div class="htit">企业及人员管理</div>
@@ -18,7 +18,7 @@
                     <a href="javascript:void(0);" class="add" @click="show=1">添加</a>
                 </div>
             </div>
-            <div class="listbox">
+            <div class="listbox" v-if="lists">
                 <table cellpadding=0 cellspacing=0>
                     <thead>
                         <td width="20%">姓名</td>
@@ -28,20 +28,24 @@
                         <td width="20%">操作</td>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>2018年02月20日</td>
-                            <td>xxx</td>
-                            <td>xxx</td>
-                            <td>xxx</td>
+                        <tr v-for="i in lists.data">
+                            <td>{{i.staffName}}</td>
+                            <td>{{i.staffId}}</td>
+                            <td>{{i.mobilePhone}}</td>
+                            <td>{{staffTypeFlag[i.staffTypeFlag-1]}}</td>
                             <td>
-                                <a href="javascript:void(0);" @click="show=1">查看</a>
-                                <a href="javascript:void(0);" @click="show=1">编辑</a>
+                                <a href="javascript:void(0);" @click="see(i.id,2)">查看</a>
+                                <a href="javascript:void(0);" @click="bj(i.id,3)">编辑</a>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="page"></div>
+                <div class="page">
+                    <el-pagination :current-page="comlist.page" @current-change="handleCurrentChange" layout="prev, pager, next" :total="lists.count">
+                    </el-pagination>
+                </div>
             </div>
+            <div class="nobg" v-else></div>
         </div>
         <div class="logistics" v-else>
             <div class="bread">
@@ -51,335 +55,450 @@
             <div class="consys">
                 <div class="appform">
                     <el-form :model="form" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-                    <div class="clearbox">
-                        <div class="inputbox">
-                             <el-form-item label="人员姓名" prop="name">
-                                <el-input v-model="form.name" placeholder="请输入内容" prop="name"></el-input>
-                             </el-form-item>
+                        <div class="clearbox">
+                            <div class="inputbox">
+                                <el-form-item label="人员姓名" prop="name">
+                                    <el-input v-model="form.name" placeholder="请输入内容" prop="name" :disabled="show==2"></el-input>
+                                </el-form-item>
+                            </div>
+                            <div class="inputbox">
+                                <el-form-item label="身份证号码" prop="idcard">
+                                    <el-input v-model="form.idcard" placeholder="请输入内容" :disabled="show==2"></el-input>
+                                </el-form-item>
+                            </div>
                         </div>
-                        <div class="inputbox">
-                             <el-form-item label="身份证号码" prop="idcard">
-                                <el-input v-model="form.idcard" placeholder="请输入内容"></el-input>
-                             </el-form-item>
+                        <div class="clearbox">
+                            <div class="inputbox">
+                                <el-form-item label="实际居住地" prop="address">
+                                    <el-input v-model="form.address" placeholder="请输入内容" :disabled="show==2"></el-input>
+                                </el-form-item>
+                            </div>
+                            <div class="inputbox">
+                                <el-form-item label="联系电话" prop="tel">
+                                    <el-input v-model="form.tel" placeholder="请输入内容" :disabled="show==2"></el-input>
+                                </el-form-item>
+                            </div>
                         </div>
-                    </div>
-                    <div class="clearbox">
-                        <div class="inputbox">
-                            <el-form-item label="实际居住地" prop="address">
-                                <el-input v-model="form.address" placeholder="请输入内容"></el-input>
-                             </el-form-item>
+                        <div class="clearbox">
+                            <div class="inputbox">
+                                <el-form-item label="许可证编号" prop="xkz">
+                                    <el-input v-model="form.xkz" placeholder="请输入内容" :disabled="show==2"></el-input>
+                                </el-form-item>
+                            </div>
+                            <div class="inputbox">
+                                <el-form-item label="手机号码" prop="phone">
+                                    <el-input v-model="form.phone" placeholder="请输入内容" :disabled="show==2"></el-input>
+                                </el-form-item>
+                            </div>
                         </div>
-                        <div class="inputbox">
-                            <el-form-item label="联系电话" prop="tel">
-                                <el-input v-model="form.tel" placeholder="请输入内容"></el-input>
-                             </el-form-item>
+                        <div class="clearbox">
+                            <div class="inputbox">
+                                <label class="el-form-item__label">人员类型</label>
+                                <el-select v-model="select.value1" @change="select1" :disabled="show==2">
+                                    <el-option v-for="item in select.select1" :label="item.type" :key="item.class" :value="item.class">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                            <div class="inputbox" v-show='selectSwitch'>
+                                    <el-select v-model="select.value2" :disabled="show==2">
+                                        <el-option v-for="item in select.select2" :label="item.type" :key="item.class" :value="item.class">
+                                        </el-option>
+                                    </el-select>
+                               
+                            </div>
                         </div>
-                    </div>
-                    <div class="clearbox">
-                        
-                        <div class="inputbox">
-                            <el-form-item label="许可证编号" prop="xkz">
-                                <el-input v-model="form.xkz" placeholder="请输入内容"></el-input>
-                             </el-form-item>
+                        <div class="clearbox" v-if="ck">
+                            <div class="inputbox">
+                                <el-form-item label="系统账号" prop="loginname" :disabled="show==2">
+                                    <el-input v-model="form.loginname" placeholder="请输入内容"></el-input>
+                                </el-form-item>
+                            </div>
+                            <div class="inputbox">
+                                <el-form-item label="系统密码" prop="loginname" :disabled="show==2">
+                                    <el-input v-model="form.password" placeholder="请输入内容"></el-input>
+                                </el-form-item>
+                            </div>
                         </div>
-                          <div class="inputbox">
-                             <el-form-item label="手机号码" prop="phone">
-                                <el-input v-model="form.phone" placeholder="请输入内容"></el-input>
-                             </el-form-item>
+                        <div class="clearbox">
+                            <div class="inputbox">
+    
+                            </div>
+                            <div class="inputbox">
+                                <el-form-item label="户籍所在地" prop="hj">
+                                    <el-input v-model="form.hj" placeholder="请输入内容" :disabled="show==2"></el-input>
+                                </el-form-item>
+                            </div>
                         </div>
-                    </div>
-                    <div class="clearbox">
-                         <div class="inputbox">
-                            <label class="el-form-item__label">人员类型</label>
-                            <el-select v-model="select.value1"  @change="select1">
-                                <el-option
-                                v-for="item in select.select1"
-                                :label="item.type"
-                                :value="item.class">
-                                </el-option>
-                            </el-select>
-                        </div>
-                        <div class="inputbox" v-show='selectSwitch'>
-                            <label class="el-form-item__label">人员级别</label>
-                             <el-select v-model="select.value2">
-                                <el-option
-                                v-for="item in select.select2"
-                                :label="item.type"
-                                :value="item.class">
-                                </el-option>
-                            </el-select>
-                        </div>
-                    </div>
-                    <div class="clearbox" v-if="ck">
-                        <div class="inputbox">
-                             <el-form-item label="系统账号" prop="loginname">
-                                <el-input v-model="form.loginname" placeholder="请输入内容"></el-input>
-                             </el-form-item>
-                        </div>
-                        <div class="inputbox">
-                             <el-form-item label="系统密码" prop="loginname">
-                                <el-input v-model="form.password" placeholder="请输入内容"></el-input>
-                             </el-form-item>
-                        </div>
-                    </div>
-                    <div class="clearbox">
-                        <div class="inputbox">
-                          
-                        </div>
-                        <div class="inputbox">
-                            <el-form-item label="户籍所在地" prop="hj">
-                                <el-input v-model="form.hj" placeholder="请输入内容"></el-input>
-                             </el-form-item>
-                        </div>
-                    </div>
-                    <div class="clearbox">
-                        <div class="inputbox">
-                            <label class="el-form-item__label">身份证照片</label>
-                            <div class="el-form-item__content">
-                                <div class="upload">
-                                    <input type="file"  @change="Acardpic($event,0)">
-                                    <img>
-                                    <i class="el-icon-upload"></i>
+                        <div class="clearbox">
+                            <div class="inputbox">
+                                <label class="el-form-item__label">身份证照片</label>
+                                <div class="el-form-item__content">
+                                    <div class="upload">
+                                        <input type="file" @change="Acardpic($event,0)" :disabled="show==2">
+                                        <img v-if="show==2 || show==3" style="opacity:1;" :src="img[0].src">
+                                        <img v-else>
+                                        <i class="el-icon-upload"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inputbox">
+                                <label class="el-form-item__label">身份证照片（背面）</label>
+                                <div class="el-form-item__content">
+                                    <div class="upload">
+                                        <input type="file" @change="Acardpic($event,1)" :disabled="show==2">
+                                        <img v-if="show==2 || show==3" style="opacity:1;" :src="img[1].src">
+                                        <img v-else>
+                                        <i class="el-icon-upload"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="inputbox">
-                            <label class="el-form-item__label">身份证照片（背面）</label>
-                            <div class="el-form-item__content">
-                                <div class="upload">
-                                    <input type="file"  @change="Acardpic($event,1)">
-                                    <img>
-                                    <i class="el-icon-upload"></i>
+                        <div class="clearbox">
+                            <div class="inputbox">
+                                <label class="el-form-item__label">资格证书</label>
+                                <div class="el-form-item__content">
+                                    <div class="upload">
+                                        <input type="file" @change="Acardpic($event,2)" :disabled="show==2">
+                                        <img v-if="show==2 || show==3" style="opacity:1;" :src="img[2].src">
+                                        <img v-else>
+                                        <i class="el-icon-upload"></i>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="clearbox">
-                        <div class="inputbox">
-                            <label class="el-form-item__label">资格证书</label>
-                            <div class="el-form-item__content">
-                                <div class="upload">
-                                   <input type="file"  @change="Acardpic($event,2)">
-                                    <img>
-                                    <i class="el-icon-upload"></i>
+                            <div class="inputbox">
+                                <label class="el-form-item__label">人员照片</label>
+                                <div class="el-form-item__content">
+                                    <div class="upload">
+                                        <input type="file" @change="Acardpic($event,3)" :disabled="show==2">
+                                        <img v-if="show==2 || show==3" style="opacity:1;" :src="img[3].src">
+                                        <img v-else>
+                                        <i class="el-icon-upload"></i>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="inputbox">
-                            <label class="el-form-item__label">人员照片</label>
-                            <div class="el-form-item__content">
-                                <div class="upload">
-                                   <input type="file"  @change="Acardpic($event,3)">
-                                    <img>
-                                    <i class="el-icon-upload"></i>               
-                                </div>
+                            <div class="clearbox" style='margin-top:30px;' v-if="show==1">
+                                <el-checkbox label="是否注册账号" v-model='ck'></el-checkbox>
                             </div>
                         </div>
-                        <div class="clearbox" style='margin-top:30px;'>
-                            <el-checkbox label="是否注册账号" v-model='ck'></el-checkbox>
-                        </div>
-                    </div>
                     </el-form>
                     <div class="logsub">
-                        <a href="javascript:void(0)" class="sub" @click="sub('ruleForm')">提交</a>
+                        <a href="javascript:void(0)" class="sub" @click="sub('ruleForm',0)" v-if="show==1">提交</a>
+                        <a href="javascript:void(0)" class="sub" @click="sub('ruleForm',1)" v-if="show==3">修改</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
 <script>
     import Base64 from "js-base64";
     import $http from "superagent";
     export default {
         data() {
             return {
-                person:{
-                    uid:Base64.Base64.decode(sessionStorage.getItem("person")),
-                    companyid:sessionStorage.getItem("companyid")
+                firid: null, //修改时用的id
+                staffTypeFlag: this.publics.person, //人员类型
+                load: false,
+                lists: null, //表格书库列表
+                person: {
+                    uid: Base64.Base64.decode(sessionStorage.getItem("person")),
+                    companyid: Base64.Base64.decode(sessionStorage.getItem("companyid"))
                 },
-                ck:false,                    //是否 注册账号
-                selectSwitch:true,        //人员类型为技术员
-                show:1,             //切换展示   0为列表 1为添加  2为查看 3为编辑
-                form:{              //提交 和 查看数据
-                    name:"",        //姓名    
-                    idcard:"",      //身份证
-                    address:"",     //地址
-                    tel:"",         //联系电话
-                    phone:"",       //手机
-                   // type:"",        //人员类型
-                    loginname:"",        //登录账号
-                    password:"",      //登录账号
-                    xkz:"",      // 编码许可证
-                    hj:""
+                ck: false, //是否 注册账号
+                selectSwitch: true, //人员类型为技术员
+                show: 0, //切换展示   0为列表 1为添加  2为查看 3为编辑
+                form: { //提交 和 查看数据
+                    name: "", //姓名    
+                    idcard: "", //身份证
+                    address: "", //地址
+                    tel: "", //联系电话
+                    phone: "", //手机
+                    // type:"",        //人员类型
+                    loginname: "", //登录账号
+                    password: "", //登录账号
+                    xkz: "", // 编码许可证
+                    hj: ""
                 },
-                rules:{
-                     name:{ required: true, message: '请输入人员姓名', trigger: 'blur' },
-                     idcard:{ required: true, message: '请输入身份证号码', trigger: 'blur' },
-                     address:{ required: true, message: '请输入居住地', trigger: 'blur' },
-                     tel:{ required: true, message: '请输入联系电话', trigger: 'blur' },
-                     xkz:{ required: true, message: '请输入许可证', trigger: 'blur' },
-                     phone:{ required: true, message: '请输入手机号', trigger: 'blur' },
-                     hj:{ required: true, message: '请输入户籍所在地', trigger: 'blur' },
+                rules: {
+                    name: {
+                        required: true,
+                        message: '请输入人员姓名',
+                        trigger: 'blur'
+                    },
+                    idcard: {
+                        required: true,
+                        message: '请输入身份证号码',
+                        trigger: 'blur'
+                    },
+                    address: {
+                        required: true,
+                        message: '请输入居住地',
+                        trigger: 'blur'
+                    },
+                    tel: {
+                        required: true,
+                        message: '请输入联系电话',
+                        trigger: 'blur'
+                    },
+                    xkz: {
+                        required: true,
+                        message: '请输入许可证',
+                        trigger: 'blur'
+                    },
+                    phone: {
+                        required: true,
+                        message: '请输入手机号',
+                        trigger: 'blur'
+                    },
+                    hj: {
+                        required: true,
+                        message: '请输入户籍所在地',
+                        trigger: 'blur'
+                    },
                     // name:{ required: true, message: '请输入人员姓名', trigger: 'blur' },
                 },
-                select:{              //人员切换数据
-                    select1:[
-                        {
-                            type:"技术员",
-                            class:4
+                select: { //人员切换数据
+                    select1: [{
+                            type: "技术员",
+                            class: 4
                         },
                         {
-                            type:"安全员",
-                            class:2
+                            type: "安全员",
+                            class: 2
                         },
                         {
-                            type:"保管员",
-                            class:3
+                            type: "保管员",
+                            class: 3
                         },
                         {
-                            type:"爆破员",
-                            class:1
+                            type: "爆破员",
+                            class: 1
                         }
                     ],
-                    select2:[
-                        {
-                            type:"高",
-                            class:3
+                    select2: [{
+                            type: "高",
+                            class: 3
                         },
                         {
-                            type:"中",
-                            class:2
+                            type: "中",
+                            class: 2
                         },
                         {
-                            type:"低",
-                            class:1
+                            type: "低",
+                            class: 1
                         }
                     ],
-                    value1:4,
-                    value2:3
+                    value1: 4,
+                    value2: 3
                 },
-                img:[               //图片数据
-                    {src:""},//身份证照片
-                    {src:""},//身份证照片 背面
-                    {src:""},//人物照片1
-                    {src:""},//人物照片2
+                img: [ //图片数据
+                    {
+                        src: "123123"
+                    }, //身份证照片
+                    {
+                        src: "123123"
+                    }, //身份证照片 背面
+                    {
+                        src: "123123"
+                    }, //人物照片1
+                    {
+                        src: "123123"
+                    }, //人物照片2
                 ],
-                comlist:{           //列表分页数据
-                    size:10,
-                    page:1,
+                comlist: { //列表分页数据
+                    page: 1,
+                    size: 10,
                 },
-                find:"",            //查询数据名字
-                time:""             //查询数据时间
+                find: "", //查询数据名字
+                time: "", //查询数据时间
             }
         },
-        mounted(){
-            this.publics.$AJAX("company/"+this.person.companyid+"/staffs","get",this.comlist,e=>{
-                
-            })
+        mounted() {
+            this.list();
         },
-        methods:{
-            select1(e){
-                this.selectSwitch=e==4?true:false;
+        methods: {
+            see(id, ii) { //查看详情
+                this.publics.$AJAX("company/user/" + this.person.uid + "/person", "get", {
+                    userId: this.person.uid,
+                    id: id
+                }, e => {
+                    let form = {
+                        name: e.name, //姓名    
+                        idcard: e.staffId, //身份证
+                        address: e.address, //地址
+                        tel: e.mobilePhone, //联系电话
+                        phone: e.phone, //手机
+                        // type:"",        //人员类型
+                        loginname: "", //登录账号
+                        password: "", //登录账号
+                        xkz: e.licenceNumber, // 编码许可证
+                        hj: e.homeAddress,
+    
+                    }
+                    this.select.value2 = e.staffLevel;
+                    this.select.value1 = e.staffTypeFlag;
+                    this.form = form;
+    
+                    this.img[0].src = e.staffIdPhotoFrontOssCode;
+                    this.img[1].src = e.staffIdPhotoReverseOssCode;
+                    this.img[2].src = e.staffDocumentOssCode;
+                    this.img[3].src = e.staffPhotoOssCode;
+                    this.show = ii;
+                })
             },
-            sub(formName){
+            bj(id, ii) {
+                this.see(id, 3);
+                this.firid = id;
+            },
+            handleCurrentChange(val) { //分页操作
+                this.comlist.page = val;
+                this.list();
+            },
+            list() { //表格渲染
+                let load = this.$loading({
+                    text: '页面加载中',
+                });
+                this.publics.$AJAX("company/" + this.person.companyid + "/staffs", "get", this.comlist, e => {
+                    if (e.count == 0)
+                        this.lists = null;
+                    else {
+                        this.lists = e;
+                    }
+                    setTimeout(e => {
+                        load.close();
+                    }, 500)
+                    this.load = true;
+    
+                })
+            },
+            select1(e) { //
+                this.selectSwitch = e == 4 ? true : false;
+            },
+            sub(formName, type, id) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                       let newurl="company/"+this.person.companyid+"/user/"+this.person.uid+"/people?"
-                       if(this.ck){
-                           if(!this.form.loginname){
-                               this.$message({
-                                   type:"error",
-                                   message:"请输入系统账号"
-                               })
-                               return false;
-                           }
-                           if(!this.form.password){
+                        let newurl = "company/" + this.person.companyid + "/user/" + this.person.uid + "/people?"
+                        if (this.ck) {
+                            if (!this.form.loginname) {
                                 this.$message({
-                                   type:"error",
-                                   message:"请输入系统密码"
-                               })
-                               return false;
-                           }
-                           newurl=newurl+"isAccount=1&account="+this.form.loginname+"&password="+this.form.password;
-                       }else{
-                           newurl=newurl+"isAccount=0"
-                       }
-                       for(let val of this.img){
-                           if(!val.src){
-                               this.$message({
-                                   type:"error",
-                                   message:"请上传照片！"
-                               })
-                               return false;
-                           };
-                       }
-                       let form=this.form;
-                       let staffAddDto={
+                                    type: "error",
+                                    message: "请输入系统账号"
+                                })
+                                return false;
+                            }
+                            if (!this.form.password) {
+                                this.$message({
+                                    type: "error",
+                                    message: "请输入系统密码"
+                                })
+                                return false;
+                            }
+                            newurl = newurl + "isAccount=1&account=" + this.form.loginname + "&password=" + this.form.password;
+                        } else {
+                            newurl = newurl + "isAccount=0"
+                        }
+                        for (let val of this.img) {
+                            if (!val.src) {
+                                this.$message({
+                                    type: "error",
+                                    message: "请上传照片！"
+                                })
+                            };
+                        }
+                        let form = this.form;
+                        let staffAddDto = {
                             "address": form.address,
-                            "companyId":this.person.companyid,
-                            "homeAddress":form.hj,
+                            "companyId": this.person.companyid,
+                            "homeAddress": form.hj,
                             "inputMan": this.person.uid,
                             "licenceNumber": form.xkz,
-                            "mobilePhone":form.phone,
-                            "name": form.name,
+                            "mobilePhone": form.phone,
+                            "staffName": form.name,
                             "phone": form.tel,
-                            "staffDocumentFrontOssCode": this.img[2].src,
+                            "staffDocumentOssCode": this.img[2].src,
                             "staffId": form.idcard,
                             "staffIdPhotoFrontOssCode": this.img[0].src,
                             "staffIdPhotoReverseOssCode": this.img[1].src,
                             "staffLevel": this.select.value2,
-                            "staffPhotoFrontOssCode":this.img[3].src,
+                            "staffPhotoOssCode": this.img[3].src,
                             "staffType": this.select.value1,
                             "staffTypeFlag": this.select.value1,
-                            "staffTypeId": "string"         //人员类型id
+                            //"staffTypeId": "string" //人员类型id
                         }
-                        let load=this.$loading({
-                            text: '添加人员中，请稍等',
-                        });
-                        this.publics.$AJAX(newurl,"post",staffAddDto,e=>{
-                            load.close();
-                            setTimeout(e=>{
-                                this.$message({
-                                    type:"success",
-                                    message:"添加成功"
-                                });;
-                            },1000)
-                            this.$router.push(0)
-                           // load.close();
-                        })
+                        if (type == 0) { //提交
+                            let load = this.$loading({
+                                text: '添加人员中，请稍等',
+                            });
+                            this.publics.$AJAX(newurl, "post", staffAddDto, e => {
+                                load.close();
+                                setTimeout(e => {
+                                    this.$message({
+                                        type: "success",
+                                        message: "添加成功"
+                                    });;
+                                }, 1000)
+                                window.history.go(0)
+                                // load.close();
+    
+    
+                            })
+                        } else { //修改
+                            staffAddDto.id = this.firid;
+                            let load = this.$loading({
+                                text: '修改人员中，请稍等',
+                            });
+                            //imgplice
+                            staffAddDto.staffDocumentOssCode=this.publics.imgplice(staffAddDto.staffDocumentOssCode);
+                            staffAddDto.staffIdPhotoFrontOssCode=this.publics.imgplice(staffAddDto.staffIdPhotoFrontOssCode);
+                            staffAddDto.staffIdPhotoReverseOssCode=this.publics.imgplice(staffAddDto.staffIdPhotoReverseOssCode);
+                            staffAddDto.staffPhotoOssCode=this.publics.imgplice(staffAddDto.staffPhotoOssCode);
+                            this.publics.$AJAX( "user/" + this.person.uid + "/company/people", "patch", staffAddDto, e => {
+                                load.close();
+                                setTimeout(e => {
+                                    this.$message({
+                                        type: "success",
+                                        message: "修改 成功"
+                                    });;
+                                }, 1000)
+                                window.history.go(0)
+                            })
+                        }
                     } else {
-                        console.log('error submit!!');
+                        load.close();
                         return false;
                     }
                 });
             },
-            Acardpic: function (imgFile,index) {
-				let filextension = imgFile.target.value.substring(imgFile.target.value.lastIndexOf("."), imgFile.target.value.length);
-				filextension = filextension.toLowerCase();
-				let file = imgFile.target.files[0], fileSize = 0;
+            Acardpic: function(imgFile, index) {
+                let filextension = imgFile.target.value.substring(imgFile.target.value.lastIndexOf("."), imgFile.target.value.length);
+                filextension = filextension.toLowerCase();
+                let file = imgFile.target.files[0],
+                    fileSize = 0;
                 fileSize = file.size / 1024;
-				if (fileSize > 5120) {
-					Message({
-						type: "error",
-						message: "不能超过5mb"
-					});
-					return false;
-				} else {
-					if ((filextension != '.jpg') && (filextension != '.gif') && (filextension != '.jpeg') && (filextension != '.png') && (filextension != '.bmp')) {
-						Message({
-							type: "error",
-							message: "对不起，系统仅支持标准格式的照片，请您调整格式后重新上传，谢谢!"
-						});
-					}
-					else {
-						let fd = new FormData(),render = new FileReader(),_this=this;
+                if (fileSize > 1024) {
+                    this.$message({
+                        type: "error",
+                        message: "上传图片的不能超过1mb"
+                    });
+                    return false;
+                } else {
+                    if ((filextension != '.jpg') && (filextension != '.gif') && (filextension != '.jpeg') && (filextension != '.png') && (filextension != '.bmp')) {
+                        this.$message({
+                            type: "error",
+                            message: "对不起，系统仅支持标准格式的照片，请您调整格式后重新上传，谢谢!"
+                        });
+                        return false;
+                    } else {
+                        let fd = new FormData(),
+                            render = new FileReader(),
+                            _this = this;
                         let path, imgbox = imgFile.target.parentNode.querySelectorAll("img")[0];
                         fd.append("multipartFile", file);
-                        let load=this.$loading({
+                        let load = this.$loading({
                             text: '上传中',
                         });
-                        this.publics.imgput(this.person.uid,fd,(err, res)=>{
+                        this.publics.imgput(this.person.uid, fd, (err, res) => {
                             if (err || !res.ok) {
                                 this.$message({
                                     type: "error",
@@ -388,18 +507,18 @@
                                 load.close()
                             } else {
                                 render.readAsDataURL(file);
-                                render.onload = function (e) {
+                                render.onload = function(e) {
                                     let result = this.result;
-                                    imgbox.src=result;
-                                    imgbox.style.opacity=1;
-                                    _this.img[index].src=res.text;
+                                    imgbox.src = result;
+                                    imgbox.style.opacity = 1;
+                                    _this.img[index].src = res.text;
                                     load.close()
                                 }
-                            }    
+                            }
                         })
-					}
-				}
-			}
+                    }
+                }
+            }
         }
     }
 </script>

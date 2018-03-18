@@ -764,6 +764,10 @@ a {
           .el-form-item__content{
             float:left;
             width:70%;
+          
+          }
+          .is-disabled{
+            
           }
           .el-form-item{
             margin-bottom: 0!important;
@@ -1423,7 +1427,7 @@ a {
       background:$hover;
     }
     .clearbox{
-      margin-bottom:20px;
+      padding-bottom:20px;
       width:100%;
       overflow:hidden;
       .inputbox{
@@ -1433,8 +1437,17 @@ a {
           width:120px;
         }
         .smal{font-size:12px;}
-        .el-input{
+        .el-form-item__content{
           width:70%;
+          float:left;
+        }
+        .el-form-item{
+          margin-bottom: 0;
+        }
+      }
+      .findinput{
+        .el-input{
+          width:40%;
         }
       }
       .sel{float:left;}
@@ -1453,10 +1466,13 @@ a {
           float:left;
           width:33%;
           overflow:hidden;
+          .el-form-item{
+            margin-bottom: 0;
+          }
           label{
             width:120px;
           }
-          .el-input{
+          .el-input,.el-select{
             width:70%;
             float:left;
           }
@@ -1744,6 +1760,109 @@ a {
     width:100%;
     height:400px; 
   }
+  .lf{
+    float:left;
+  }
+  .newot{
+    padding-top:30px;
+    border-top:1px solid #eee;
+    margin-top:10px;
+    margin-bottom: 40px;
+    border-bottom:1px solid #eee;
+    padding-bottom:20px;
+    .clearbox{
+      overflow: hidden;
+      width:100%;
+    }
+   
+    .sminput{
+      overflow: hidden;
+      width:100%;
+      margin-bottom:20px;
+      .el-form-item__content{
+        height:50px;
+      }
+      .hti{
+        width: 100px;
+        line-height: 26px;
+        text-align: center;
+        background: #5e914f;
+        border-radius: 4px;
+        font-size: 20px;
+        color: #fff;
+        overflow: hidden;
+       
+      }
+      label.hti{
+        width:90px;
+        margin-top:6px;
+        padding:0;
+        margin-right:20px;
+      }
+      .el-form-item {
+        float:left;
+      }
+      label{
+        text-align: right;
+        vertical-align: middle;
+        float: left;
+        font-size: 14px;
+        color: #606266;
+        line-height: 40px;
+        padding: 0 12px 0 0;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 100px;
+        margin-bottom:10px;
+      }
+      .mg100{
+        margin-left:100px;
+      }
+      .el-radio+.el-radio{
+        margin:0;
+      }
+      .el-select,.el-input{
+        float:left;
+        width:200px;
+      }
+      .ssm{
+        width: 100px;
+      }
+      .sm{
+        width:100px;
+        .el-input-group__append{
+          border-radius:0;
+        }
+        .el-input__inner{
+          border-radius:0;
+        }
+      }
+      .no{
+        .el-input-group__append{
+            border-right:0 none;
+        }
+        
+      }
+      .add{
+        display: block;
+        width: 60px;
+        font-size: 28px;
+        float: left;
+        margin-left: 20px;
+      }
+    }
+    .el-button{
+      float:left;
+      margin-left:10px;
+    }
+    .mgb0{
+      margin-bottom:0;
+    }
+  }
+  .mybox .el-message-box__message{
+    height:400px;
+    overflow-y: scroll;
+  }
   @media screen and (max-width: 1500px) {
     .bla_xgform .clearbox .ssll {
       label{
@@ -1756,7 +1875,7 @@ a {
     .main{
       padding-left:304px;
     }
-    .bla_xgform .clearbox .sminput .el-input{
+    .bla_xgform .clearbox .sminput .el-input,.bla_xgform .clearbox .sminput .el-select{
       width:60%;
     }
     .bla_xgform .other .inputbox label{
